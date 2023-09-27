@@ -2,7 +2,7 @@ from django.db import models
 
 
 # TODO 会社データ作成
-class company(models.Model):
+class Company(models.Model):
     """_summary_
     会社データ
     Args:
@@ -12,11 +12,12 @@ class company(models.Model):
     name = models.CharField(max_length=200)  # 会社名
     address = models.CharField(max_length=200)  # 住所
 
-    pub_date = models.DateTimeField("date published")
+    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
+    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
 
 
 # TODO 要員データ作成
-class person(models.Model):
+class Person(models.Model):
     """_summary_
     要員データ
     Args:
@@ -28,7 +29,7 @@ class person(models.Model):
 
 
 # TODO 受注データ作成
-class r_order(models.Model):
+class R_Order(models.Model):
     """_summary_
     受注データ
     Args:
@@ -40,7 +41,7 @@ class r_order(models.Model):
 
 
 # TODO 発注データ作成
-class order(models.Model):
+class Order(models.Model):
     """_summary_
     発注データ
     Args:
@@ -52,7 +53,7 @@ class order(models.Model):
 
 
 # TODO 売上データ作成
-class sales(models.Model):
+class Sales(models.Model):
     """_summary_
     売上データ
     Args:
@@ -64,7 +65,7 @@ class sales(models.Model):
 
 
 # TODO 請求データ作成
-class invoice(models.Model):
+class Invoice(models.Model):
     """_summary_
     売上データ
     Args:
@@ -76,7 +77,7 @@ class invoice(models.Model):
 
 
 # TODO 外注データ作成
-class order(models.Model):
+class OSCost(models.Model):
     """_summary_
     外注データ
     Args:
@@ -88,7 +89,7 @@ class order(models.Model):
 
 
 # TODO 支払データ作成
-class payment(models.Model):
+class Payment(models.Model):
     """_summary_
     支払データ
     Args:
