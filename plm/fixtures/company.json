@@ -1,0 +1,35 @@
+[
+  {
+    "model": "plm.company",
+    "pk": 1,
+    "fields": {
+      "name": "ＭＫＤＦ株式会社",
+      "address": 3,
+      "claimant_number": "T1234567890123",
+      "created_at": "2023-11-11T05:21:36.308Z",
+      "updated_at": "2023-11-11T05:21:36.308Z"
+    }
+  },
+  {
+    "model": "plm.company",
+    "pk": 2,
+    "fields": {
+      "name": "有限会社インフォメーションシャワー",
+      "address": 4,
+      "claimant_number": "T1231234567890",
+      "created_at": "2023-11-11T05:23:26.378Z",
+      "updated_at": "2023-11-11T05:23:26.378Z"
+    }
+  },
+  {
+    "model": "plm.company",
+    "pk": 3,
+    "fields": {
+      "name": "サルベージマネジメント株式会社",
+      "address": 5,
+      "claimant_number": "T9990123456789",
+      "created_at": "2023-11-11T05:24:38.665Z",
+      "updated_at": "2023-11-11T05:24:38.665Z"
+    }
+  }
+]

@@ -1,22 +1,6 @@
 from django.db import models
 
 
-# 会社種別
-class CompanyType(models.Model):
-    """_summary_
-    会社種別データ
-    Args:
-        models (_type_): _description_
-    """
-
-    # 種別
-    value = models.CharField(verbose_name="会社種別", max_length=200)
-    # 作成日時
-    created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
-    # 更新日時
-    updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
-
-
 # 住所データ
 class Address(models.Model):
     """_summary_
@@ -34,11 +18,14 @@ class Address(models.Model):
     # 住所１
     address1 = models.CharField(max_length=100)
     # 住所２
-    address2 = models.CharField(max_length=100)
+    address2 = models.CharField(max_length=100, blank=True, null=False, default="")
     # 作成日時
     created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
     # 更新日時
     updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    def __str__(self):
+        return self.zip + " " + self.pref + self.city + self.address1 + self.address2
 
 
 # 会社データ
@@ -51,8 +38,6 @@ class Company(models.Model):
 
     # 会社名
     name = models.CharField(max_length=200)
-    # 会社種別
-    companytype = models.ForeignKey(CompanyType, on_delete=models.CASCADE)
     # 住所
     address = models.ForeignKey(
         Address,
@@ -60,11 +45,41 @@ class Company(models.Model):
         verbose_name="住所",
     )
     # 適格請求者番号
-    claimant_number = models.CharField(max_length=200)
+    claimant_number = models.CharField(max_length=14, blank=True, null=True)
     # 作成日時
     created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
     # 更新日時
     updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+# プロジェクトデータ
+class Project(models.Model):
+    """_summary_
+    プロジェクトデータ
+    Args:
+        models (_type_): _description_
+    """
+
+    # 対象会社
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    # プロジェクト名称
+    name = models.CharField(verbose_name="プロジェクト名称", max_length=200)
+    # 開始年月
+    start_date = models.DateField(verbose_name="開始日")
+    # 終了年月
+    end_date = models.DateField(verbose_name="終了日")
+    # 版数　修正するごとに１増加
+    version = models.IntegerField(verbose_name="版数", default=0)
+    # 作成日時
+    created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
+    # 更新日時
+    updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    def __str__(self):
+        return self.company.name + " " + self.name
 
 
 # 要員データ
@@ -79,12 +94,91 @@ class Person(models.Model):
     last_name = models.CharField(max_length=200)
     # 名
     first_name = models.CharField(max_length=200)
+    # 姓　カナ
+    kana_last_name = models.CharField(max_length=200)
+    # 名　カナ
+    kana_first_name = models.CharField(max_length=200)
     # 所属会社
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     # メールアドレス
     email = models.EmailField(max_length=200)
     # 連絡先電話番号
     phone = models.CharField(max_length=200)
+    # 作成日時
+    created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
+    # 更新日時
+    updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    def __str__(self):
+        return self.last_name + " " + self.first_name
+
+
+# プロジェクト要員データ
+class ProjectPerson(models.Model):
+    """_summary_
+    要員データ
+    Args:
+        models (_type_): _description_
+    """
+
+    # プロジェクト
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    # 要員
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+
+    # 作成日時
+    created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
+    # 更新日時
+    updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    def __str__(self):
+        return self.last_name + " " + self.first_name
+
+
+# プロジェクト工数データ
+class ProjectEffort(models.Model):
+    """_summary_
+    作業量を管理するテーブル。人月にて入力
+    Args:
+        models (_type_): _description_
+    """
+
+    # 対象プロジェクト
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    # 対象年月　月を操作する場合は1日を設定
+    target_month = models.DateField(verbose_name="対象年月")
+    # 計画工数（人月）　最大9999.9
+    budget＿effort = models.DecimalField(
+        verbose_name="計画工数", max_digits=5, decimal_places=1
+    )
+    # 実績工数人月（人月）　最大9999.9
+    actual_effort = models.DecimalField(
+        verbose_name="実績工数", max_digits=5, decimal_places=1
+    )
+    # 版数　修正するごとに１増加
+    version = models.IntegerField(verbose_name="版数", default=0)
+    # 作成日時
+    created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
+    # 更新日時
+    updated_at = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+
+# 原価データ
+class Cost(models.Model):
+    """_summary_
+    原価データ
+    Args:
+        models (_type_): _description_
+    """
+
+    # 対象要員
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    # 対象年月
+    target_month = models.DateField(verbose_name="対象年月")
+    # 原価
+    cost_price = models.IntegerField(verbose_name="原価")
+    # 版数　修正するごとに１増加
+    version = models.IntegerField(verbose_name="版数", default=0)
     # 作成日時
     created_at = models.DateTimeField(verbose_name="作成日時", auto_now_add=True)
     # 更新日時
@@ -298,7 +392,7 @@ class Sales(models.Model):
     )
     # 作業時間
     worktime = models.ForeignKey(
-        Order,
+        Worktime,
         on_delete=models.CASCADE,
         verbose_name="作業時間",
     )
@@ -312,7 +406,7 @@ class Sales(models.Model):
 # TODO 請求データ作成
 class Invoice(models.Model):
     """_summary_
-    売上データ
+    請求データ
     Args:
         models (_type_): _description_
     """
